@@ -1,8 +1,8 @@
 let jwt = require("jsonwebtoken");
 let config = require("./../config/index");
-let userModel = require("../components/userControl/models/userModel");
+let userModel = require("../components/userDB/models/userModel");
 
-module.exports = function (req, res, next) {
+module.exports = (req, res, next) => {
   let token;
   if (req.headers["x-access-token"]) {
     token = req.headers["x-access-token"];
@@ -31,7 +31,7 @@ module.exports = function (req, res, next) {
           });
         }
         req.userId = user._id;
-        req.isVerifed = user.isVerifed
+        req.isVerified = user.isVerified
         next();
       });
     });

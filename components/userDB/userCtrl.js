@@ -1,15 +1,6 @@
 const userQuery = require("./userQuery");
 const randomSt = require("randomstring");
-const nodemailer = require("nodemailer");
-
-const sender = nodemailer.createTransport({
-  service: "Gmail",
-  secure: true,
-  auth: {
-    user: process.env.MAIL_GMAIL_USER,
-    pass: process.env.MAIL_GMAIL_PASS,
-  },
-});
+const { sender } = require('../../config/mailer');
 
 function prepareMail(data) {
   return (mailContent = {
@@ -35,13 +26,11 @@ function insertUser(req, res, next) {
   const verifyExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24);
   userQuery.findExistingUser({emailId: req.body.emailId})
   .then(function (data){
-    console.log('user: ', data)
     data.length ?
     res.status(400).json('User already existed.')
     : userQuery
     .insertUser({...req.body, token: verifyToken, tokenExpiry: verifyExpiry})
     .then(function (data) {
-      console.log('data: ', req.headers)
       let mailData = {
         emailId: data.emailId,
         link: `${req.headers.origin}/verifyUser/${verifyToken}`,
