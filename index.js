@@ -5,6 +5,9 @@ const apiRoute = require("./api.route");
 const cors = require("cors");
 const dotenv = require('dotenv');
 
+const swaggerUI = require('swagger-ui-express');
+const swaggerFile = require('./swagger_output.json')
+
 dotenv.config();
 
 //setting port
@@ -19,6 +22,8 @@ app.use("/file", express.static(path.join(__dirname, "uploads")));
 
 //JSON Parser
 app.use(express.json());
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerFile))
 
 //Request Body Parser
 app.use(express.urlencoded({ extended: true }));
