@@ -1,0 +1,11 @@
+# environment
+.env
+
+# node modules
+/node_modules/
+
+# lock file
+yarn.lock
+
+# others
+.idea
