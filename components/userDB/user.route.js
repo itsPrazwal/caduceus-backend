@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const controller = require("./userCtrl");
+const controller = require("./user.controller");
 const authenticate = require("../../middlewares/authenticate");
 const authorizer = require("../../middlewares/authorize");
 const fileUpload = require("../../middlewares/fileHandler").uploadSingleImage();

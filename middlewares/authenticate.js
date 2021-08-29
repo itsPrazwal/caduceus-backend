@@ -1,6 +1,6 @@
 let jwt = require("jsonwebtoken");
 let config = require("./../config/index");
-let userModel = require("../components/userDB/models/userModel");
+let userModel = require("../components/userDB/models/user.model");
 
 module.exports = (req, res, next) => {
   let token;

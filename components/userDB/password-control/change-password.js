@@ -1,4 +1,4 @@
-const userModel = require("../models/userModel");
+const userModel = require("../models/user.model");
 const passwordHash = require("password-hash");
 
 function changePassword(req, res, next) {

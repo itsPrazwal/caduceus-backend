@@ -1,4 +1,4 @@
-const userQuery = require("./userQuery");
+const userQuery = require("./user.query");
 const randomSt = require("randomstring");
 const { sender } = require('../../config/mailer');
 

@@ -1,5 +1,5 @@
-const userModel = require("./models/userModel");
-const mapUser = require("./models/map_user");
+const userModel = require("./models/user.model");
+const mapUser = require("./models/mapUser");
 const passwordHash = require("password-hash");
 const jwt = require("jsonwebtoken");
 const {jwtSecret} = require("../../config");
