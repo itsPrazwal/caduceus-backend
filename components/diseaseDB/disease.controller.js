@@ -1,4 +1,4 @@
-const { findAllDeletedDiseases, findAllDiseases, findById, insertDisease, removeDisease, updateDisease } = require("./disease.query");
+const { findAllDeletedDiseases, findAllDiseases, findDiseaseById, insertDisease, removeDisease, updateDisease } = require("./disease.query");
 
 const controllerDiseaseInsert = async (req, res, next) => {
   try {
@@ -29,7 +29,7 @@ const controllerDiseasesGetAllDeleted = async (req, res, next) => {
 
 const controllerDiseasesGetById = async (req, res, next) => {
   try {
-    const data = await findById({ _id: req.params.id })
+    const data = await findDiseaseById({ _id: req.params.id })
     res.status(200).json(data)
   } catch (err) {
     next(err);
