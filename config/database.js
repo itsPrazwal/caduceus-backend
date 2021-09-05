@@ -1,16 +1,18 @@
 const mongoose = require("mongoose");
 
-const dbname = process.env.DB_NAME;
+const dbname = process.env.DB_NAME || 'caduceus';
 
 //MONGO DB CLOUD SERVER
-const cnxurl = process.env.DB_URL;
+const cnxurl = process.env.DB_URL || 'mongodb+srv://cluster0-jluxz.mongodb.net';
 const dbOptions = {
-  user: process.env.DB_USER,
-  pass: process.env.DB_PASS
+  user: process.env.DB_USER || 'caduceus-user',
+  pass: process.env.DB_PASS || 'vDJSytH4ONAJJmE0'
 }
 
 //LOCALHOST SERVER
 // const cnxurl = 'mongodb://localhost:27017';
+
+console.log('here: ', process.env.DB_NAME)
 
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
