@@ -6,11 +6,9 @@ const bloodBankSchema = new Schema({
     type: String,
     required: true,
   },
-  contact: {
-    email: { type: String, required: true, },
-    numbers: { type: [Number] },
-    address: { type: String },
-  },
+  email: { type: String, },
+  numbers: { type: [Number], required: true },
+  address: { type: String },
   deleted: {
     type: Boolean,
     default: false,
