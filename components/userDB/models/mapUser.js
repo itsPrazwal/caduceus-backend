@@ -1,5 +1,6 @@
 module.exports = function(data1, data2) {
   if (data2.emailId) data1.emailId = data2.emailId;
+  if (data2.fullName) data1.fullName = data2.fullName;
   if (data2.isVerified) data1.isVerified = data2.isVerified;
   if (data2.password) data1.password = data2.password;
   if (data2.token) data1.token = data2.token;

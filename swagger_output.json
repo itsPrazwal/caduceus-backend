@@ -155,13 +155,13 @@
         }
       }
     },
-    "/user/reset-password/{resetToken}": {
+    "/user/reset-password/{resetOTP}": {
       "put": {
         "tags": [],
         "description": "",
         "parameters": [
           {
-            "name": "resetToken",
+            "name": "resetOTP",
             "in": "path",
             "required": true,
             "type": "string"

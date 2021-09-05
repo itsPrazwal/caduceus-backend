@@ -2,7 +2,7 @@ const userModel = require("../models/user.model");
 const passwordHash = require("password-hash");
 
 function resetPassword(req, res, next) {
-  userModel.findOne({ token: req.params.resetToken }).exec(function (err, user) {
+  userModel.findOne({ emailId: req.body.emailId, token: req.body.otp }).exec(function (err, user) {
     if (err) {
       return next(err);
     }
@@ -15,8 +15,8 @@ function resetPassword(req, res, next) {
     if(!user.password){
       return next({message: 'Incorrect request on changing password.'})
     }
-    user.resetExpiry = null;
-    user.resetToken = null;
+    user.tokenExpiry = null;
+    user.token = null;
       user.password = passwordHash.generate(req.body.password);
       user.save(function (err, done) {
         if (err) {

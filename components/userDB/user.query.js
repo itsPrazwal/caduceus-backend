@@ -3,18 +3,17 @@ const mapUser = require("./models/mapUser");
 const passwordHash = require("password-hash");
 const jwt = require("jsonwebtoken");
 const {jwtSecret} = require("../../config");
-const randomSt = require("randomstring");
 
 function findUser() {
   return userModel.find();
 }
 
 function findOneUser(data) {
-  return userModel.findOne(data, {isVerified: 1, emailId: 1, userType: 1});
+  return userModel.findOne(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1});
 }
 
 function findExistingUser(data) {
-  return userModel.find(data, {isVerified: 1, emailId: 1, userType: 1});
+  return userModel.find(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1});
 }
 
 function insertUser(data) {
@@ -27,14 +26,14 @@ function insertUser(data) {
 function verifyUser(verifyToken){
   return new Promise(function (resolve, reject) {
     if(!verifyToken){
-      reject({message: 'Verification token not found'})
+      return reject({message: 'Verification token not found'})
     }
     userModel.findOne({token: verifyToken}).exec(function(err, user){
       if (!user) {
-        reject({ message: "User verification request invalid." });
+        return reject({ message: "User verification request invalid." });
       }
       if (Date.now() > new Date(user.resetExpiry).getTime()) {
-        reject({ message: "User verification time expired." });
+        return reject({ message: "User verification time expired." });
       }
       user.tokenExpiry = null;
       user.token = null;
@@ -64,6 +63,7 @@ function loginUser(emailId, password) {
           return resolve({
             id: user._id,
             emailId: user.emailId,
+            fullName: user.fullName,
             token,
           });
         } else {

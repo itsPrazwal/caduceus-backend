@@ -6,7 +6,8 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 
 const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./swagger_output.json')
+const swaggerFile = require('./swagger_output.json');
+const { makeErrorObject } = require("./utils/responder");
 
 dotenv.config();
 
@@ -36,10 +37,7 @@ app.use("/api", apiRoute);
 
 //Error handling Middleware
 app.use(function (err, req, res, next) {
-  console.log(err)
-  res.status(err.status || 400).json({
-    message: err.message || "Bad request.",
-  });
+  res.status(err.status || 400).json(makeErrorObject(err, err.message || 'Bad Request'));
 });
 
 //listening server

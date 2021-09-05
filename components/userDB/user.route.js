@@ -23,7 +23,7 @@ router
 
 router.route("/forgot-password").post(forgotPassword);
 
-router.route("/reset-password/:resetToken").put(resetPassword);
+router.route("/reset-password").put(resetPassword);
 
 router.route("/verify-password").post(authenticate, verifyPassword);
 router.route("/change-password").put(authenticate, verifyPassword, changePassword);

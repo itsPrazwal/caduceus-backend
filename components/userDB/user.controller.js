@@ -22,7 +22,7 @@ function prepareMail(data) {
 }
 
 function insertUser(req, res, next) {
-  const verifyToken = randomSt.generate(20);
+  const verifyToken = randomSt.generate(30);
   const verifyExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24);
   userQuery.findExistingUser({emailId: req.body.emailId})
   .then(function (data){
@@ -33,7 +33,7 @@ function insertUser(req, res, next) {
     .then(function (data) {
       let mailData = {
         emailId: data.emailId,
-        link: `${req.headers.origin}/verifyUser/${verifyToken}`,
+        link: `${req.headers.origin}/auth/verify-user/${verifyToken}`,
       };
       sender.sendMail(prepareMail(mailData), function (err, done) {
         if (err) {

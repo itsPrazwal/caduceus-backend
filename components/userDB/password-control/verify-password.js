@@ -15,7 +15,7 @@ function verifyPassword(req, res, next) {
     }
     let isMatched = passwordHash.verify(passwordToVerify, user.password);
     if (!isMatched) {
-      return next({ message: "Password verification Failure." });
+      return next({ message: "Previous password verification failure." });
     } else {
       if(req.body.newPassword){
         req.verified = true;
