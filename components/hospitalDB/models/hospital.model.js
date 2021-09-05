@@ -8,11 +8,13 @@ const hospitalSchema = new Schema({
   },
   speciality: { type: [String] },
   detail: { type: String },
-  availableServices: { type: [String] },
-  contact: {
-    email: { type: String, },
-    numbers: { type: [Number] },
-    address: { type: String },
+  email: { type: String, },
+  numbers: { type: [Number], required: true },
+  address: { type: String, required: true },
+  ambulanceId: {
+    type: Schema.Types.ObjectId,
+    ref: 'ambulanceDB',
+    default: null
   },
   deleted: {
     type: Boolean,
