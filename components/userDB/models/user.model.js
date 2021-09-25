@@ -15,14 +15,33 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  dob: {
+    type: Date,
+  },
+  bloodGroup: {
+    type: String,
+    enum: ['A-', 'B-', 'O-', 'AB-','A+', 'B+', 'O+', 'AB+'],
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'others']
+  },
+  phoneNumber: {
+    type: Number
+  },
+  address: {
+    isPublic: { type: Boolean },
+    detail: { type: String },
+  },
+  bio: { type: String },
   isVerified: {
     type: Boolean,
     default: false,
   },
-  token: {
+  otpCode: {
     type: String
   },
-  tokenExpiry: {
+  otpCodeExpiry: {
     type: Date
   },
   userType: {

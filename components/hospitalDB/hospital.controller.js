@@ -58,7 +58,6 @@ const controllerHospitalUpdate = async (req, res, next) => {
         ambulanceId = ambulance._id
       }
     }
-    console.log('am: ', ambulanceId)
     const data = await updateHospital(req.params.id, { ...req.body, ambulanceId })
     res.status(200).json(makeResponseObject(data, 'Success on updating hospital.'))
   } catch (err) {

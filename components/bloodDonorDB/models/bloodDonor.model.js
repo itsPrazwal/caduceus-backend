@@ -7,28 +7,14 @@ const bloodDonorSchema = new Schema({
     ref: 'userDB',
     required: true,
   },
-  fullName: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  dob: {
-    type: Date,
-  },
-  bloodGroup: {
-    type: String,
-    enum: ['A-', 'B-', 'O-', 'AB-','A+', 'B+', 'O+', 'AB+'],
-    required: true,
-  },
-  contact: {
-    email: { type: String, required: true, },
-    number1: { type: Number, required: true, },
-    number2: { type: Number },
-    address: {
-      isPublic: { type: Boolean },
-      detail: { type: String },
-    }
-  },
+  requests: [{
+    patientId: { 
+      type: Schema.Types.ObjectId,
+      ref: 'patientDB'
+    },
+    status: { type: String, enum: ['pending', 'accepted', 'declined'] },
+    message: { type: String }
+  }],
   deleted: {
     type: Boolean,
     default: false,

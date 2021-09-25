@@ -7,31 +7,30 @@ const doctorSchema = new Schema({
     ref: 'userDB',
     required: true,
   },
-  fullName: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  dob: {
-    type: Date,
-  },
-  speciality: { type: [String] },
-  educationDegree: { type: [String] },
+  education: [{ 
+    educationInstitution: { type: String },
+    degree: { type: String },
+    address: { type: String },
+    startYear: { type: String },
+    endYear: { type: String },
+    currentlyEnrolled: { type: Boolean },
+    speciality: { type: String }
+   }],
   relatedDepartment: [{
     type: Schema.Types.ObjectId,
     ref: 'departmentDB'
   }],
-  contact: {
-    email: { type: String },
-    number1: { type: Number },
-    number2: { type: Number },
-  },
-  experience: { type: Number },
+  experience: [{
+    medicalInstitution: { type: String },
+    address: { type: String },
+    startYear: { type: String },
+    endYear: { type: String },
+    currentCompany: { type: Boolean }
+  }],
   linkedHospital: {
     type: Schema.Types.ObjectId,
     ref: 'hospitalDB'
   },
-  image: String,
   deleted: {
     type: Boolean,
     default: false,

@@ -12,8 +12,6 @@ const dbOptions = {
 //LOCALHOST SERVER
 // const cnxurl = 'mongodb://localhost:27017';
 
-console.log('here: ', process.env.DB_NAME)
-
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
@@ -24,4 +22,4 @@ mongoose.connect(cnxurl + "/" + dbname, dbOptions, function (err, done) {
   } else {
     console.log("Database *" + dbname + "* has connected.");
   }
-}); 
+});

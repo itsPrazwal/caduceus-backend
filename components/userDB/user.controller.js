@@ -1,49 +1,81 @@
 const userQuery = require("./user.query");
-const randomSt = require("randomstring");
 const { sender } = require('../../config/mailer');
-
-function prepareMail(data) {
-  return (mailContent = {
-    from: "Caduceus <noreply@caduceus.com>",
-    to: data.emailId,
-    subject: "Email Verification",
-    html: `<p>Hello sir/ma'am,</p>
-        <p>Thank you for joining with us.</p>
-        </br>
-        <p>Please click the link below to verify your email address.</p>
-        </br>
-        <p><a href='${data.link}'>Verify</a></p>
-        <p>This link will expire in 24 hours and can be used only once.</p>
-        </br>
-        <p>If you didn't request this mail, please ignore and delete this message.</p>
-        <p>Thank You</p>
-        <p>Caduceus Pvt. Ltd.</p>`,
-  });
-}
+const { prepareMail } = require('../../utils/prepareOtpMail')
+const { generateOTPCode } = require('../../utils/generateOTPCode');
+const { makeResponseObject } = require("../../utils/responder");
+const doctorQuery = require("../doctorDB/doctor.query");
+const bloodDonorQuery = require("../bloodDonorDB/bloodDonor.query");
+const patientQuery = require("../patientDB/patient.query");
 
 function insertUser(req, res, next) {
-  const verifyToken = randomSt.generate(30);
-  const verifyExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24);
+  const { expiry, otp } = generateOTPCode()
   userQuery.findExistingUser({emailId: req.body.emailId})
-  .then(function (data){
-    data.length ?
-    res.status(400).json('User already existed.')
+    .then(function (data){
+      data.length ?
+        res.status(400).json('User with provided email already existed.')
+        : userQuery
+          .insertUser({...req.body, otpCode: otp, otpCodeExpiry: expiry})
+          .then(function (data) {
+            if(data.userType === 'DOCTOR'){              
+              doctorQuery.insertDoctor({ userId: data._id })
+            }
+            if(data.userType === 'BLOOD_DONOR'){              
+              bloodDonorQuery.insertBloodDonor({ userId: data._id })
+            }
+            if(data.userType === 'PATIENT'){              
+              patientQuery.insertPatient({ userId: data._id })
+            }
+            let mailData = {
+              fullName: data.fullName,
+              emailId: data.emailId,
+              otpCode: otp,
+            };
+            sender.sendMail(prepareMail(mailData), function (err, done) {
+              if (err) {
+                return next({
+                  status: 400,
+                  message: "Email Sending Failure",
+                  err,
+                });
+              }else{
+                res.status(200).json("User registered successfully.");
+              }
+            });
+          })
+          .catch(function (err) {
+            next(err);
+          });
+    })
+    .catch(function (err){
+      next(err)
+    })
+}
+
+function resendOtpCode(req, res, next) {
+  const { expiry, otp } = generateOTPCode()
+  userQuery.findOneUser({ emailId: req.body.emailId })
+  .then(function (user){
+    user.length <= 0 ?
+    res.status(400).json('User not found.')
     : userQuery
-    .insertUser({...req.body, token: verifyToken, tokenExpiry: verifyExpiry})
+    .updateUser(user._id,{ otpCode: otp, otpCodeExpiry: expiry})
     .then(function (data) {
       let mailData = {
-        emailId: data.emailId,
-        link: `${req.headers.origin}/auth/verify-user/${verifyToken}`,
+        fullName: user.fullName,
+        emailId: user.emailId,
+        otpCode: otp,
       };
+      console.log('maiL :', mailData)
       sender.sendMail(prepareMail(mailData), function (err, done) {
         if (err) {
+          console.log('err: ', err)
           return next({
             status: 400,
-            message: "Email Sending Failure",
+            message: "Email re-sending Failure",
             err,
           });
         }else{
-          res.status(200).json("User registered successfully.");
+          res.status(200).json("Email resent successfully.");
         }
       });
     })
@@ -78,12 +110,24 @@ function getUser(req, res, next) {
     });
 }
 
+function getUsersByUserType(req, res, next) {
+  userQuery
+    .findUsersByUserType(req.params.userType)
+    .then(function (user) {
+      res.status(200).json(makeResponseObject(user, 'User fetched successfully.'));
+    })
+    .catch(function (err) {
+      next(err);
+    });
+}
+
 function updateUser(req, res, next) {
   const {emailId, ...rest} = req.body
   userQuery
     .updateUser({ _id: req.userId }, {...rest})
     .then(function (data) {
-      res.status(data.status).json(data.message);
+      console.log('data: ', data)
+      res.status(200).json(makeResponseObject(data, 'User updated success'));
     })
     .catch(function (err) {
       next(err);
@@ -92,9 +136,9 @@ function updateUser(req, res, next) {
 
 function verifyUser(req, res, next) {
   userQuery
-    .verifyUser(req.params.verifyToken)
+    .verifyUser({ otpCode: req.body.otpCode, emailId: req.body.emailId})
     .then(function (data){
-      res.status(data.status).json(data.message);
+      res.status(200).json(data.message);
     })
     .catch(function(err){
       next(err);
@@ -107,4 +151,6 @@ module.exports = {
   loginUser,
   getUser,
   verifyUser,
+  resendOtpCode,
+  getUsersByUserType
 };

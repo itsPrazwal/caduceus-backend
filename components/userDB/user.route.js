@@ -7,6 +7,7 @@ const forgotPassword = require("./password-control/forgot-password");
 const resetPassword = require("./password-control/reset-password");
 const changePassword = require("./password-control/change-password");
 const verifyPassword = require("./password-control/verify-password");
+const authorize = require("../../middlewares/authorize");
 
 router
   .route("/register")
@@ -14,12 +15,19 @@ router
 
 router.route("/login").post(controller.loginUser);
 
-router.route("/verify/:verifyToken").get(controller.verifyUser)
+router.route("/verify").post(controller.verifyUser)
+
+router.route('/resendOtp').put(controller.resendOtpCode)
 
 router
   .route("/")
   .get(authenticate, controller.getUser)
   .put(authenticate, authorizer, controller.updateUser);
+
+router
+  .route("/byUserType/:userType")
+  .get(controller.getUsersByUserType)
+
 
 router.route("/forgot-password").post(forgotPassword);
 

@@ -9,7 +9,11 @@ function findUser() {
 }
 
 function findOneUser(data) {
-  return userModel.findOne(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1});
+  return userModel.findOne(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
+}
+
+function findUsersByUserType(userType) {
+  return userModel.find({ userType }, { emailId: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
 }
 
 function findExistingUser(data) {
@@ -23,20 +27,26 @@ function insertUser(data) {
   return mappedUser.save();
 }
 
-function verifyUser(verifyToken){
+function verifyUser({ otpCode, emailId }){
   return new Promise(function (resolve, reject) {
-    if(!verifyToken){
-      return reject({message: 'Verification token not found'})
+    if(!otpCode){
+      return reject({message: 'OTP code not found'})
     }
-    userModel.findOne({token: verifyToken}).exec(function(err, user){
+    userModel.findOne({ emailId }).exec(function(err, user){
       if (!user) {
-        return reject({ message: "User verification request invalid." });
+        return reject({ message: "User not found." });
       }
-      if (Date.now() > new Date(user.resetExpiry).getTime()) {
-        return reject({ message: "User verification time expired." });
+      if(!user.otpCode){
+        return reject({message: 'User verification request invalid.'})
       }
-      user.tokenExpiry = null;
-      user.token = null;
+      if (Date.now() > new Date(user.otpCodeExpiry).getTime()) {
+        return reject({ message: "OTP Code verification time expired." });
+      }
+      if(user.otpCode !== otpCode){
+        return reject({ message: 'Invalid OTP Code.' })
+      }
+      user.otpCodeExpiry = null;
+      user.otpCode = null;
       user.isVerified = true;
       user.save(function (err, done) {
         if (err) {
@@ -57,13 +67,20 @@ function loginUser(emailId, password) {
       .findOne({ $or: [{ emailId: emailId, deleted: false }] })
       .then(function (user) {
         if (passwordHash.verify(password, user.password)) {
-          let token = jwt.sign({ id: user._id, emailId: user.emailId, isVerified: user.isVerified }, jwtSecret, {
-            expiresIn: "21600000"
-          });
-          return resolve({
+          const jwtObject = {
             id: user._id,
             emailId: user.emailId,
             fullName: user.fullName,
+            userType: user.userType,
+            isVerified: user.isVerified
+          }
+          let token = jwt.sign(jwtObject, jwtSecret, {
+            expiresIn: "21600000"
+          });
+          const {id: _id, ...restObject} = jwtObject
+          return resolve({
+            _id,
+            ...restObject,
             token,
           });
         } else {
@@ -84,13 +101,10 @@ function updateUser(id, data) {
         if (err) {
           return reject({
             message: "User Update Failure",
-            statue: 400,
+            status: 400,
           });
         }
-        resolve({
-          message: "User Updated Successfully",
-          status: 200,
-        });
+        resolve(done);
       });
     });
   });
@@ -104,4 +118,5 @@ module.exports = {
   loginUser,
   updateUser,
   verifyUser,
+  findUsersByUserType,
 };

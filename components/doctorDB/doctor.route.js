@@ -8,7 +8,8 @@ const {
   controllerDoctorUpdate, 
   controllerDoctorsGetAll, 
   controllerDoctorsGetAllDeleted, 
-  controllerDoctorsGetById
+  controllerDoctorsGetById,
+  controllerDoctorsGetByUserId,
 } =  require('./doctor.controller');
 
 router
@@ -19,6 +20,10 @@ router
 router
   .route('/archived')
   .get(authenticate, authorize, controllerDoctorsGetAllDeleted);
+
+router
+  .route('/user/:userId')
+  .get(authenticate, authorize, controllerDoctorsGetByUserId);
 
 router
   .route("/:id")

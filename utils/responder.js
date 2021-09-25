@@ -6,7 +6,7 @@ const makeResponseObject = (data, message) => ({
 
 const makeErrorObject = (error, message) => ({
     result: false,
-    error,
+    status: error.status || 400,
     message
 })
 
