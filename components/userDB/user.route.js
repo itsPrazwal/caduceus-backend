@@ -14,6 +14,7 @@ router
   .post(controller.insertUser);
 
 router.route("/login").post(controller.loginUser);
+router.route("/adminLogin").post(controller.loginAdmin);
 
 router.route("/verify").post(controller.verifyUser)
 

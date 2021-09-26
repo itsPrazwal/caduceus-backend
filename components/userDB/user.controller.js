@@ -53,6 +53,7 @@ function insertUser(req, res, next) {
 
 function resendOtpCode(req, res, next) {
   const { expiry, otp } = generateOTPCode()
+  console.log('req: ', req.headers.origin)
   userQuery.findOneUser({ emailId: req.body.emailId })
   .then(function (user){
     user.length <= 0 ?
@@ -90,7 +91,18 @@ function resendOtpCode(req, res, next) {
 
 function loginUser(req, res, next) {
   userQuery
-    .loginUser(req.body.emailId, req.body.password)
+    .loginUser(req.body.emailId, req.body.password, 'CLIENT')
+    .then(function (data) {
+      res.status(200).json(data);
+    })
+    .catch(function (err) {
+      next(err);
+    });
+}
+
+function loginAdmin(req, res, next) {
+  userQuery
+    .loginUser(req.body.emailId, req.body.password, 'ADMIN')
     .then(function (data) {
       res.status(200).json(data);
     })
@@ -152,5 +164,6 @@ module.exports = {
   getUser,
   verifyUser,
   resendOtpCode,
-  getUsersByUserType
+  getUsersByUserType,
+  loginAdmin
 };

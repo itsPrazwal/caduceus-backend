@@ -61,11 +61,14 @@ function verifyUser({ otpCode, emailId }){
   });
 }
 
-function loginUser(emailId, password) {
+function loginUser(emailId, password, reqOrigin) {
   return new Promise(function (resolve, reject) {
     userModel
-      .findOne({ $or: [{ emailId: emailId, deleted: false }] })
+      .findOne({ $or: [{ emailId: emailId }] , deleted: false })
       .then(function (user) {
+        if((reqOrigin === 'ADMIN' && user.userType !== 'ADMIN') || (reqOrigin === 'CLIENT' && user.userType === 'ADMIN') ){
+          return reject({ message: 'The user is not authorize in this system.', status: 401 })
+        }
         if (passwordHash.verify(password, user.password)) {
           const jwtObject = {
             id: user._id,

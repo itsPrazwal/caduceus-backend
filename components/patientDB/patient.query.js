@@ -1,9 +1,12 @@
 const patientModel = require("./models/patient.model");
 const mapPatient = require("./models/mapPatient");
+const { ObjectId } = require('mongoose').Types
 
 const findAllPatients = () => patientModel.find({ deleted: false });
 
 const findPatientById = (id) => patientModel.findOne({ _id: id, deleted: false });
+
+const findPatientByUserId = (userId) => patientModel.findOne({ userId: ObjectId(userId), deleted: false });
 
 const findAllDeletedPatients = () => patientModel.find({ deleted: true });
 
@@ -30,6 +33,7 @@ module.exports = {
   findAllPatients,
   findAllDeletedPatients,
   findPatientById,
+  findPatientByUserId,
   insertPatient,
   updatePatient,
   removePatient
