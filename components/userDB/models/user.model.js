@@ -22,6 +22,7 @@ const userSchema = new Schema({
     type: String,
     enum: ['A-', 'B-', 'O-', 'AB-','A+', 'B+', 'O+', 'AB+'],
   },
+  activeForDonation: { type: Boolean, default: false },
   gender: {
     type: String,
     enum: ['male', 'female', 'others']

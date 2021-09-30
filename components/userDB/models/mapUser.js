@@ -12,6 +12,7 @@ module.exports = function(data1, data2) {
   if (data2.gender) data1.gender = data2.gender;
   if (data2.phoneNumber) data1.phoneNumber = data2.phoneNumber;
   if (data2.address) data1.address = data2.address;
+  if (data2.activeForDonation) data1.activeForDonation = data2.activeForDonation;
   if (data2.bio) data1.bio = data2.bio;
   return data1;
 };

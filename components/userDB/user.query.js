@@ -9,15 +9,15 @@ function findUser() {
 }
 
 function findOneUser(data) {
-  return userModel.findOne(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
+  return userModel.findOne(data, { isVerified: 1, activeForDonation: 1, emailId: 1, userType: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
 }
 
 function findUsersByUserType(userType) {
-  return userModel.find({ userType }, { emailId: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
+  return userModel.find(userType === 'BLOOD_DONOR' ? { $or: [{ userType }, { activeForDonation: true}] } : { userType }, { activeForDonation: 1, emailId: 1, fullName: 1, gender: 1, dob: 1, phoneNumber: 1, bio: 1, address: 1, bloodGroup: 1});
 }
 
 function findExistingUser(data) {
-  return userModel.find(data, {isVerified: 1, emailId: 1, userType: 1, fullName: 1});
+  return userModel.find(data, {isVerified: 1, activeForDonation: 1, emailId: 1, userType: 1, fullName: 1});
 }
 
 function insertUser(data) {
@@ -81,8 +81,17 @@ function loginUser(emailId, password, reqOrigin) {
             expiresIn: "21600000"
           });
           const {id: _id, ...restObject} = jwtObject
+          let loginObject = { }
+          if(user.gender) loginObject.gender = user.gender
+          if(user.dob) loginObject.dob = user.dob
+          if(user.phoneNumber) loginObject.phoneNumber = user.phoneNumber
+          if(user.bio) loginObject.bio = user.bio
+          if(user.address) loginObject.address = user.address
+          if(user.bloodGroup) loginObject.bloodGroup = user.bloodGroup
+          if(user.activeForDonation) loginObject.activeForDonation = user.activeForDonation
           return resolve({
             _id,
+            ...loginObject,
             ...restObject,
             token,
           });
