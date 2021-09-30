@@ -11,6 +11,7 @@ const eventRoute = require('./components/eventDB/event.route');
 const hospitalRoute = require('./components/hospitalDB/hospital.route');
 const patientRoute = require('./components/patientDB/patient.route');
 const requestRoute = require('./components/requestDB/request.route');
+const ambulanceRequestRoute = require('./components/ambulanceRequestDB/ambulanceRequest.route');
 
 router.use("/user", userRoute);
 router.use("/disease", diseaseRoute );
@@ -23,5 +24,6 @@ router.use("/event", eventRoute );
 router.use("/hospital", hospitalRoute );
 router.use("/patient", patientRoute );
 router.use("/request", requestRoute );
+router.use("/ambulanceRequest", ambulanceRequestRoute)
 
 module.exports =  router;
